@@ -1,0 +1,23 @@
+{
+  "name": "bgov-playwright-e2e",
+  "version": "1.0.0",
+  "description": "This repository contains JavaScript test codes and Playwright resources to be used in test automating a civic technology platform - BetterGovPH.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bcbhalili/bgov-playwright-e2e.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/bcbhalili/bgov-playwright-e2e/issues"
+  },
+  "homepage": "https://github.com/bcbhalili/bgov-playwright-e2e#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.0"
+  }
+}
