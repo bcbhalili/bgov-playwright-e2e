@@ -4,6 +4,10 @@ export class FCP {
     // Declare Members
     readonly page: Page;
     readonly endURL: string;
+    readonly visualTab: Locator;
+    readonly tableTab: Locator;
+    readonly contractorsTab: Locator;
+    readonly mapTab: Locator;
     readonly filtersForm: Locator;
     readonly searchProjects: Locator;
     readonly searchProjectsLabel: Locator;
@@ -31,6 +35,10 @@ export class FCP {
     constructor(page: Page) {
         this.page = page
         this.endURL = '/flood-control-projects'
+        this.visualTab = page.getByRole('link', { name: 'Visual', exact: true })
+        this.tableTab = page.getByRole('link', { name: 'Table', exact: true })
+        this.contractorsTab = page.getByRole('link', { name: 'Contractors', exact: true })
+        this.mapTab = page.getByRole('link', { name: 'Map', exact: true })
         // Locate the filters form (base webelement)
         this.filtersForm = page.locator('//div[@class="bg-gray-50"]/div/div/div[1]/div')
         // Locate the Search Projects div that has a text
@@ -89,5 +97,24 @@ export class FCP {
         await expect(div).toBeVisible();
         await expect(label).toBeVisible();
         await expect(input).toBeVisible();
-    };
+    }
+    async selectItemFromDropdown(dropdown: Locator, item: string) {
+        /*
+        * This asynchronous method selects an
+        * option/item from a specific dropdown.
+        */
+
+        await dropdown.click()
+        await this.page.getByRole('button', { name: item }).click()
+    }
+    async selectItemFromCombobox(dropdown: Locator, item: string) {
+        /*
+        * This asynchronous method searches and selects an
+        * option/item from a specific combobox.
+        */
+
+        await dropdown.click()
+        await this.page.getByPlaceholder('Search...').fill(item)
+        await this.page.locator(`//button/div/span[text()='${item}']`).click()
+    }
 } 

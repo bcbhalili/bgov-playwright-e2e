@@ -15,7 +15,7 @@ export class BGovHome {
     async goto() {
         this.page.goto('https://bettergov.ph/');
     }
-    async navigateTo(navbar:Locator) {
+    async navigateTo(navbar: Locator) {
         await navbar.click();
     }
 } 
