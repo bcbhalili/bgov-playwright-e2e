@@ -18,6 +18,7 @@
   "homepage": "https://github.com/bcbhalili/bgov-playwright-e2e#readme",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@types/node": "^25.3.0"
+    "@types/node": "^25.3.0",
+    "xlsx": "^0.18.5"
   }
 }
