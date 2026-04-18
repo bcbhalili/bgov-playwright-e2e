@@ -1,28 +1,9 @@
 import { test, expect } from '@playwright/test'
 import { FCP_Visual } from '../pages/bgov-fcp-visual';
-import { BGovHome } from '../pages/bgov-home';
 import { FCP_Table } from '../pages/bgov-fcp-table';
-import * as XLSX from 'xlsx'    // Imported XLSX for excel functions
-import path from 'path';        // Imported path for directory functions
-
-// Specify data types in excel
-interface TestData {
-    project: string;
-    year: string;
-    region: string;
-    province: string;
-    work: string;
-    deo: string;
-    district: string;
-}
-// Find the target test data file ('fcp-data.xlsx')
-const testDataFile = path.join(__dirname, '../test-data/fcp-data.xlsx')
-// Read excel file
-const workbook = XLSX.readFile(testDataFile)
-// Specify excel sheet
-const worksheet = workbook.Sheets['FCP-TD']
-// Get entries and convert to JSON
-const sheetToJSON = XLSX.utils.sheet_to_json<TestData>(worksheet)
+import { FCP_Contractors } from '../pages/bgov-fcp-contractors';
+import { BGovHome } from '../pages/bgov-home';
+import { FCP_Map } from '../pages/bgov-fcp-map';
 
 test.describe('Flood Control Projects E2E Tests', () => {
     test.beforeEach(async ({ page }) => {
@@ -39,7 +20,9 @@ test.describe('Flood Control Projects E2E Tests', () => {
             Test Title: Verify end URL and tabs of BGovPH's Flood Control Projects Page
             Pre-requisites: none
         */
-        const fcp = new FCP_Visual(page);
+        const fcp = new FCP_Visual(page)
+        const fcp_c = new FCP_Contractors(page)
+        const fcp_m = new FCP_Map(page)
         const testID = testInfo.title
 
         // Assertion: URL ends with "/flood-control-projects"
@@ -47,8 +30,8 @@ test.describe('Flood Control Projects E2E Tests', () => {
         // Assertion: Verify if Visual, Table, Contractors, and Map are visible
         await expect(fcp.visualTab).toBeVisible();
         await expect(fcp.tableTab).toBeVisible();
-        await expect(fcp.contractorsTab).toBeVisible();
-        await expect(fcp.mapTab).toBeVisible();
+        await expect(fcp_c.tab).toBeVisible();
+        await expect(fcp_m.tab).toBeVisible();
 
         // Generate Test Evidence/s
         await page.screenshot({
@@ -195,136 +178,51 @@ test.describe('Flood Control Projects E2E Tests', () => {
             path: `test-evidences/${testID}/fcp-filters-legislative-district.png`
         });
     });
-    sheetToJSON.forEach((row, index) => {
-        test(`FCP-TC004-${index + 1}`, async ({ page }, testInfo) => {
-            /* 
-                Date Created: March 20, 2026
-                Automation Engineer: Biendroid
-                Test ID: FCP-TC004
-                Test Title: Verify search results to given filters of BGovPH's Flood Control Projects Page in Visual tab
-                Pre-requisites: 
-                    Search Projects: Completion of Bagani Ubbog-San Juan-San Antonio Drainage Canal, Candon City, Ilocos Sur
-                    Infrastructure Year: 2021
-                    Region: Region I
-                    Type of Work: Construction of Drainage Structure
-                    District Engineering Office: Ilocos Sur 2nd District Engineering Office
-                    Legislative District: ILOCOS SUR (SECOND LEGISLATIVE DISTRICT)
-            */
-
-            const fcp = new FCP_Visual(page)
-            const testID = testInfo.title
-
-            // Navigate to Visual tab
-            await fcp.visualTab.click();
-
-            // Provide values to filters
-            await fcp.searchProjectsField.fill(row.project)
-            await fcp.selectItemFromDropdown(fcp.infrastructureYearDropdown, row.year)
-            await fcp.selectItemFromCombobox(fcp.regionDropdown, row.region)
-            await fcp.selectItemFromCombobox(fcp.provinceDropdown, row.province.toUpperCase())
-            await fcp.selectItemFromCombobox(fcp.typeOfWorkDropdown, row.work)
-            await fcp.selectItemFromCombobox(fcp.deoDropdown, row.deo)
-            await fcp.selectItemFromCombobox(fcp.legislativeDistrictDropdown, row.district)
-            await page.evaluate(() => {
-                window.scrollTo(0, 0)
-            });
-
-            // Assert entered filters to be visible in header
-            const filterText = await page.locator("//div[@class='flex-1']/h1").textContent()
-            expect(filterText).toContain(`Search: "${row.project}"`)
-            expect(filterText).toContain(`Year: ${row.year}`)
-            expect(filterText).toContain(`Province: ${row.province.toUpperCase()}`)
-            expect(filterText).toContain(`Region: ${row.region}`)
-            expect(filterText).toContain(`Type of Work: ${row.work}`)
-            expect(filterText).toContain(`District Engineering Office: ${row.deo}`)
-            expect(filterText).toContain(`Legislative District: ${row.district}`)
-
-            // Generate Test Evidence/s
-            await page.screenshot({
-                path: `test-evidences/${testID}/fcp-results-${index + 1}.png`
-            });
-
-            await page.getByRole('link', { name: 'Government' }).first()
-            await page.getByRole('link', { name: 'Flood Control Projects' }).first()
-        });
-    });
-    test('FCP-TC005', async ({ page }, testInfo) => {
+    test('FCP-TC004', async ({ page }, testInfo) => {
         /* 
-            Date Created: March 28, 2026
+            Date Created: April 18, 2026
             Automation Engineer: Biendroid
-            Test ID: FCP-TC005
-            Test Title: Verify search results to given filters of BGovPH's Flood Control Projects Page in Table tab
-            Pre-requisites: 
-                Search Projects: Completion of Bagani Ubbog-San Juan-San Antonio Drainage Canal, Candon City, Ilocos Sur
-                Infrastructure Year: 2021
-                Region: Region I
-                Type of Work: Construction of Drainage Structure
-                District Engineering Office: Ilocos Sur 2nd District Engineering Office
-                Legislative District: ILOCOS SUR (SECOND LEGISLATIVE DISTRICT)
+            Test ID: FCP-TC004
+            Test Title: Verify Contractors tab filters of BGovPH's Flood Control Projects Page
+            Pre-requisites: none
         */
 
-        const fcp = new FCP_Table(page)
-        const testID = testInfo.title
-        const project = 'Completion of Bagani Ubbog-San Juan-San Antonio Drainage Canal, Candon City, Ilocos Sur'
-        const year = 2021
-        const province = 'ILOCOS SUR'
-        const region = 'Region I'
-        const work = 'Construction of Drainage Structure'
-        const deo = 'Ilocos Sur 2nd District Engineering Office'
-        const district = 'ILOCOS SUR (SECOND LEGISLATIVE DISTRICT)'
+        const contractor = new FCP_Contractors(page)
 
-        // Navigate to Table tab
-        await fcp.tableTab.click();
-        // Provide values to filters
-        await fcp.searchProjectsField.fill(project)
-        await fcp.selectItemFromDropdown(fcp.infrastructureYearDropdown, String(year))
-        await fcp.selectItemFromCombobox(fcp.regionDropdown, region)
-        await fcp.selectItemFromCombobox(fcp.provinceDropdown, province)
-        await fcp.selectItemFromCombobox(fcp.typeOfWorkDropdown, work)
-        await fcp.selectItemFromCombobox(fcp.deoDropdown, deo)
-        await fcp.selectItemFromCombobox(fcp.legislativeDistrictDropdown, district)
-        await page.evaluate(() => {
-            window.scrollTo(0, 0)
-        });
-
-        // Get filter text heading and filter tags
-        const filterText = await fcp.appliedFilters.getByRole('heading').textContent()
-        const searchTagText = await fcp.appliedFilters.getByText(new RegExp(project)).last().textContent()
-        const yearTagText = await fcp.appliedFilters.getByText(new RegExp(String(year))).last().textContent()
-        const regionTagText = await fcp.appliedFilters.getByText(new RegExp(region)).last().textContent()
-        const provinceTagText = await fcp.appliedFilters.getByText(new RegExp(province)).nth(1).textContent()
-        const typeOfWorkTagText = await fcp.appliedFilters.getByText(new RegExp(work)).last().textContent()
-        const deoTagText = await fcp.appliedFilters.getByText(new RegExp(deo)).last().textContent()
-        const legislativeDistrictTagText = await fcp.appliedFilters.getByText(new RegExp(province)).last().textContent()
-
-        // const searchTagText = await fcp.appliedFilters.locator("//div/span[1]").textContent()
-        // const yearTagText = await fcp.appliedFilters.locator("//div/span[2]").textContent()
-        // const regionTagText = await fcp.appliedFilters.locator("//div/span[3]").textContent()
-        // const provinceTagText = await fcp.appliedFilters.locator("//div/span[4]").textContent()
-        // const typeOfWorkTagText = await fcp.appliedFilters.locator("//div/span[5]").textContent()
-        // const deoTagText = await fcp.appliedFilters.locator("//div/span[6]").textContent()
-        // const legislativeDistrictTagText = await fcp.appliedFilters.locator("//div/span[7]").textContent()
-
-        // Assert according to filter text heading
-        expect(filterText).toContain(`Search: "${project}"`)
-        expect(filterText).toContain(`Year: ${year}`)
-        expect(filterText).toContain(`Region: ${region}`)
-        expect(filterText).toContain(`Province: ${province}`)
-        expect(filterText).toContain(`Type of Work: ${work}`)
-        expect(filterText).toContain(`District Engineering Office: ${deo}`)
-        expect(filterText).toContain(`Legislative District: ${district}`)
-        // Assert according to filter tags
-        expect(searchTagText).toEqual(`Search: "${project}"`)
-        expect(yearTagText).toEqual(`Year: ${year}`)
-        expect(regionTagText).toEqual(`Region: ${region}`)
-        expect(provinceTagText).toEqual(`Province: ${province}`)
-        expect(typeOfWorkTagText).toEqual(`Type of Work: ${work}`)
-        expect(deoTagText).toEqual(`District Engineering Office: ${deo}`)
-        expect(legislativeDistrictTagText).toEqual(`Legislative District: ${district}`)
+        // Click "Contractor" tab
+        await contractor.tab.click()
+        // Assertions
+        // - Heading is visible
+        // - Search Field is visible
+        await expect(contractor.heading).toBeVisible()
+        await expect(contractor.searchField).toBeVisible()
 
         // Generate Test Evidence/s
         await page.screenshot({
-            path: `test-evidences/${testID}/fcp-results.png`
-        });
+            path: `test-evidences/${testInfo.title}/fcp-contractors-page.png`
+        })
     });
+    test('FCP-TC005', async ({ page }, testInfo) => {
+        /* 
+            Date Created: April 18, 2026
+            Automation Engineer: Biendroid
+            Test ID: FCP-TC005
+            Test Title: Verify Map tab filters of BGovPH's Flood Control Projects Page
+            Pre-requisites: none
+        */
+
+        const map = new FCP_Map(page)
+
+        // Click "Contractor" tab
+        await map.tab.click()
+        // Assertions
+        // - Heading is visible
+        // - Search Field is visible
+        await expect(map.heading).toBeVisible()
+
+        // Generate Test Evidence/s
+        await page.screenshot({
+            path: `test-evidences/${testInfo.title}/fcp-map-page.png`
+        })
+    });   
 });

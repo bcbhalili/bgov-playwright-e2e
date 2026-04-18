@@ -6,8 +6,6 @@ export abstract class FCP {
     readonly endURL: string;
     readonly visualTab: Locator;
     readonly tableTab: Locator;
-    readonly contractorsTab: Locator;
-    readonly mapTab: Locator;
     readonly filtersForm: Locator;
     readonly searchProjects: Locator;
     readonly searchProjectsLabel: Locator;
@@ -37,8 +35,6 @@ export abstract class FCP {
         this.endURL = '/flood-control-projects'
         this.visualTab = page.getByRole('link', { name: 'Visual', exact: true })
         this.tableTab = page.getByRole('link', { name: 'Table', exact: true })
-        this.contractorsTab = page.getByRole('link', { name: 'Contractors', exact: true })
-        this.mapTab = page.getByRole('link', { name: 'Map', exact: true })
         // Locate the filters form (base webelement)
         this.filtersForm = page.locator("//div[contains(@class, 'bg-gray-50')]/div/div/div[1]")
         // Locate the Search Projects div that has a text
