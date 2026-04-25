@@ -24,7 +24,7 @@ const worksheet = workbook.Sheets['FCP-TD']
 // Get entries and convert to JSON
 const sheetToJSON = XLSX.utils.sheet_to_json<TestData>(worksheet)
 
-test.describe('Flood Control Projects E2E Data-Driven Tests', () => {
+test.describe('Flood Control Projects E2E Data-Driven Tests - Projects', () => {
     test.beforeEach(async ({ page }) => {
         /*
             Date Created: April 18, 2026
@@ -45,11 +45,11 @@ test.describe('Flood Control Projects E2E Data-Driven Tests', () => {
         await home.navigateTo(home.fcpNavBar);
     });
     sheetToJSON.forEach((row, index) => {
-        test(`FCP-DDT-TC001-${index + 1}`, async ({ page }, testInfo) => {
+        test(`FCP-DDT-P-TC001-${index + 1}`, async ({ page }, testInfo) => {
             /* 
                 Date Created: April 18, 2026
                 Automation Engineer: Biendroid
-                Base Test ID: FCP-DDT-TC001
+                Base Test ID: FCP-DDT-P-TC001
                 Test Title: Verify search results to given filters of BGovPH's Flood Control Projects Page in Visual tab
                 Test Data: fcp-data.xlsx
             */
@@ -84,19 +84,16 @@ test.describe('Flood Control Projects E2E Data-Driven Tests', () => {
 
             // Generate Test Evidence/s
             await page.screenshot({
-                path: `test-evidences/${testID}/fcp-results-${index + 1}.png`
+                path: `test-evidences/${testID}/fcp-projects-${index + 1}.png`
             });
-
-            await page.getByRole('link', { name: 'Government' }).first()
-            await page.getByRole('link', { name: 'Flood Control Projects' }).first()
         });
     });
     sheetToJSON.forEach((row, index) => {
-        test(`FCP-DDT-TC002-${index + 1}`, async ({ page }, testInfo) => {
+        test(`FCP-DDT-P-TC002-${index + 1}`, async ({ page }, testInfo) => {
             /* 
                 Date Created: March 28, 2026
                 Automation Engineer: Biendroid
-                Test ID: FCP-TC005
+                Base Test ID: FCP-DDT-P-TC002
                 Test Title: Verify search results to given filters of BGovPH's Flood Control Projects Page in Table tab
                 Pre-requisites: 
                     Search Projects: Completion of Bagani Ubbog-San Juan-San Antonio Drainage Canal, Candon City, Ilocos Sur
@@ -161,7 +158,7 @@ test.describe('Flood Control Projects E2E Data-Driven Tests', () => {
 
             // Generate Test Evidence/s
             await page.screenshot({
-                path: `test-evidences/${testID}/fcp-results.png`
+                path: `test-evidences/${testID}/fcp-projects-${index + 1}.png`
             });
         });
     });
